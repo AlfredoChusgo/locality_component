@@ -4,16 +4,17 @@ import { Autocomplete, Avatar, CircularProgress, IconButton, List, ListItem, Lis
 import store, { RootState, useAppDispatch } from "../redux/store/store";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
-import { addLocationToSelectedLocalidad, fetchLocalities, removeLastLocalidadSelected, resetState } from "../redux/features/location_picker_slice";
+import { addLocationToSelectedLocalidad, fetchLocalities, removeLastLocalidadSelected, removeStartingPoint, resetState } from "../redux/features/location_picker_slice";
 import DeleteIcon from '@mui/icons-material/Delete';
 import React from "react";
 import { LocalidadViewModel } from "../data/models";
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import RestoreIcon from '@mui/icons-material/Restore';
+import { start } from "repl";
 export default function LocationPickerComponent() {
     const dispatch = useAppDispatch;
 
-    const { localidadAutoCompleteList: localidadList, loading, error, selectedLocalidadList, startingPoint,totalDistance } = useSelector((state: RootState) => state.locationPicker);
+    const { localidadAutoCompleteList: localidadList, loading, error, selectedLocalidadList, startingPoint, totalDistance } = useSelector((state: RootState) => state.locationPicker);
     useEffect(() => {
         store.dispatch(fetchLocalities());
     }, [dispatch]);
@@ -94,7 +95,7 @@ export default function LocationPickerComponent() {
                 <Grid xs={12} spacing={1}>
 
                     <List >
-                        {getStartingPointComponent() != undefined && getStartingPointComponent()}
+                        {!loading && getStartingPointComponent() != undefined && getStartingPointComponent()}
                         {!loading && selectedLocalidadComponent}
                         {loading && selectedLocalidadLoading}
                     </List>
@@ -103,7 +104,7 @@ export default function LocationPickerComponent() {
                     {/* <Item>xs=8</Item> */}
                     <Typography variant="subtitle1" component="span">
                         {`Distancia total : ${Math.round(totalDistance.value * 100) / 100} ${totalDistance.unit} `}
-                        
+
                     </Typography>
                 </Grid>
             </Grid>
@@ -120,7 +121,10 @@ export default function LocationPickerComponent() {
 
 
     function getStartingPointComponent() {
-        const startingPointActionButton = selectedLocalidadList.length == 0 ? (<IconButton edge="end" aria-label="delete">
+        const startingPointActionButton = selectedLocalidadList.length == 0  ? (
+        <IconButton edge="end" aria-label="delete" onClick={()=>{
+            store.dispatch(removeStartingPoint());
+        }}>
             <DeleteIcon />
         </IconButton>) : null;
         const startingPointComponent = (<ListItem
@@ -132,10 +136,7 @@ export default function LocationPickerComponent() {
                 primary={startingPoint?.displayName}
                 secondary="Punto de partida" />
         </ListItem>);
-        return startingPointComponent;
+        return startingPoint ? startingPointComponent : null;
     }
 }
 
-function getStartingComponent() {
-
-}

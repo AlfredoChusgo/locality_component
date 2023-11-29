@@ -90,6 +90,11 @@ const locationPickerListSlice = createSlice({
       state.loading =  false;
       state.error = "";
     },
+    removeStartingPoint: (state)=>{
+      if(state.selectedLocalidadList.length == 0){
+        state.startingPoint = undefined;
+      }      
+    },
     removeLastLocalidadSelected: (state)=>{
       const newArray = state.selectedLocalidadList.filter((_, index, array) => index < array.length - 1);
       state.selectedLocalidadList = newArray;
@@ -130,5 +135,5 @@ const locationPickerListSlice = createSlice({
 
 //export const { increment, decrement } = searchHomeSlice.actions;
 //export const { applyFilters } = locationPickerListSlice.actions;
-export const { setStartingPoint,resetState,removeLastLocalidadSelected } = locationPickerListSlice.actions;
+export const { setStartingPoint,resetState,removeLastLocalidadSelected, removeStartingPoint } = locationPickerListSlice.actions;
 export default locationPickerListSlice.reducer;
