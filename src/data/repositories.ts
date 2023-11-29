@@ -69,11 +69,10 @@ export class CachedLocalidadRepository implements ILocalidadRepository {
 }
 
 export class FakeDistanceCalculatorService implements IDistanceCalculatorService {
-    getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
-        return new Promise((resolve, reject) => {
-            let result = Math.random() * 100 + 1;
-            return resolve( {value:result,unit: "km"});
-        });
+    async getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        let result = Math.random() * 100 + 1;
+        return {value:result,unit: "km"};        
     }
 }
 
@@ -99,7 +98,6 @@ export class InMemoryLocalidadRepository implements ILocalidadRepository {
     private async loadList(): Promise<void> {
 
         try {
-
             this.list = [
                 {id:11,displayName:"localidad 1",geoPoint:{lat:45.5456,long:46.5454}},
                 {id:22,displayName:"localidad 2",geoPoint:{lat:46.5456,long:47.5454}},
@@ -118,7 +116,8 @@ export class InMemoryLocalidadRepository implements ILocalidadRepository {
     }
 
     async getAll(): Promise<LocalidadViewModel[]> {
-        await this.load();
+        await this.load();        
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         return this.list;
     }
 }
