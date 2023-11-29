@@ -1,0 +1,22 @@
+LocationPicker : 
+    workflow:
+        select a locality:
+            *type something and select an item from the dropdown
+            *a loading widget should be shown (waiting for the response of the API)
+            *the item should be added to the selectedLocationList, with the distance from the previous point
+
+        remove a locality from the selectedLocationList:
+            with the selectedLocationList with more than 0 items , select x icon that is present at the 
+            right of the item
+            loading widget should be shown (waiting for the repsonse of the api)
+            item is removed from the selectedLocationList, with the distance updated
+
+        update the inputHidden with the state of the locationPicker:
+            the component should be create with the id of the input hidden where it should update it's current state.
+
+        
+    Rules:
+        select a locality that is already in the selectedLocationList:
+            *the last item from the selectedLocationlist should not be selected or display an error 
+            if the same item is selected
+
