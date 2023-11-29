@@ -1,11 +1,80 @@
 import { Distance, GeopointViewModel, LocalidadViewModel } from "./models";
 
-export interface ILocalidadRepository{
+export interface ILocalidadRepository {
     getAll(): Promise<LocalidadViewModel[]>;
+
+    getById(id: number): Promise<LocalidadViewModel>;
 }
 
-export interface IDistanceCalculatorService{
-    getDistance( sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance>;
+// export interface IAddLocalidadOperation{
+//     addRangue(localidades:LocalidadViewModel[]): Promise<void>;
+// }
+
+export interface IDistanceCalculatorService {
+    getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance>;
+}
+
+
+// export class InMemoryLocalidadRepository implements ILocalidadRepository, IAddLocalidadOperation {
+//     private list: LocalidadViewModel[] = [];
+
+//     public constructor() {
+//         // private constructor to prevent constructing new instances of the Singleton outside the class
+//     }
+//     async addRangue(localidades: LocalidadViewModel[]): Promise<void> {
+//         this.list = localidades;
+//     }
+
+//     async getAll(): Promise<LocalidadViewModel[]> {
+//         return this.list;
+//     }
+
+//     async getById(id: string): Promise<LocalidadViewModel> {
+//         const localidad = this.list.find(item => item.id.toString() === id);
+
+//         if (localidad) {
+//             return Promise.resolve(localidad);
+//         }
+//         throw new Error(`Localidad con id:${id} no fue encontrada`);
+//     }
+// }
+
+export class CachedLocalidadRepository implements ILocalidadRepository {
+    private list: LocalidadViewModel[] = [];
+
+    public constructor(private remoteRepository: ILocalidadRepository) {
+
+    }
+
+    async getById(id: number): Promise<LocalidadViewModel> {
+        if (this.list.length == 0) {
+            this.list = await this.remoteRepository.getAll();
+        }
+
+        const localidad = this.list.find(item => item.id === id);
+
+        if (localidad) {
+            return Promise.resolve(localidad);
+        }
+        throw new Error(`Localidad con id:${id} no fue encontrada`);
+
+    }
+    async getAll(): Promise<LocalidadViewModel[]> {
+        if (this.list.length == 0) {
+            this.list = await this.remoteRepository.getAll();
+        }
+        return this.list;
+    }
+
+}
+
+export class FakeDistanceCalculatorService implements IDistanceCalculatorService {
+    getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
+        return new Promise((resolve, reject) => {
+            let result = Math.random() * 100 + 1;
+            return resolve( {value:result,unit: "km"});
+        });
+    }
 }
 
 
@@ -17,15 +86,24 @@ export class InMemoryLocalidadRepository implements ILocalidadRepository {
         // private constructor to prevent constructing new instances of the Singleton outside the class
     }
 
+    async getById(id: number): Promise<LocalidadViewModel> {
+        await this.load();
+        const localidad = this.list.find(item => item.id === id);
+
+        if (localidad) {
+            return Promise.resolve(localidad);
+        }
+        throw new Error(`Localidad con id:${id} no fue encontrada`);
+    }
 
     private async loadList(): Promise<void> {
 
         try {
 
             this.list = [
-                {id:1,displayName:"localidad 1",lat:"45.5456",long:"46.5454"},
-                {id:2,displayName:"localidad 2",lat:"46.5456",long:"47.5454"},
-                {id:3,displayName:"localidad 3",lat:"47.5456",long:"48.5454"},
+                {id:11,displayName:"localidad 1",geoPoint:{lat:45.5456,long:46.5454}},
+                {id:22,displayName:"localidad 2",geoPoint:{lat:46.5456,long:47.5454}},
+                {id:33,displayName:"localidad 3",geoPoint:{lat:47.5456,long:48.5454}},
             ];
             this.isLoaded = true;
         } catch (error) {
@@ -42,14 +120,5 @@ export class InMemoryLocalidadRepository implements ILocalidadRepository {
     async getAll(): Promise<LocalidadViewModel[]> {
         await this.load();
         return this.list;
-    }
-}
-
-export class FakeDistanceCalculatorService implements IDistanceCalculatorService {
-    getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
-        return new Promise((resolve,reject)=>{
-            let result = Math.random() * 100 + 1;
-            return resolve(new Distance(result,"km"));
-        });        
     }
 }

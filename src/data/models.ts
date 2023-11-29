@@ -1,41 +1,28 @@
-export interface LocalidadViewModel{
+export interface LocalidadViewModel {
     id: number;
-    displayName : string;
-    long : string;
-    lat : string;
+    displayName: string;
+    geoPoint: GeopointViewModel;
 }
 
-export interface LocalidadSelectedViewModel{
+export interface LocalidadSelectedViewModel {
     sourceLocalidad: LocalidadViewModel;
-    targetLocalidad : LocalidadViewModel;
-    distance:number;
+    targetLocalidad: LocalidadViewModel;
+    distance: Distance;
 }
 
-export interface GeopointViewModel{
-    lat:string;
-    long:string;
+export interface GeopointViewModel {
+    lat: number;
+    long: number;
 }
 
-export class Distance {
-    private _value: number;
-    private _unit: 'mt' | 'km' | 'mi';
+// Define a type for the unit
+export type DistanceUnit = 'mt' | 'km' | 'mi';
 
-    constructor(value: number, unit: 'mt' | 'km' | 'mi') {
-        this._value = value;
-        this._unit = unit;
-    }
-
-    get value(): number {
-        return this._value;
-    }
-
-    get unit(): 'mt' | 'km' | 'mi' {
-        return this._unit;
-    }
-
-    toString(): string {
-        return `${this._value} ${this._unit}`;
-    }
+// Define an interface for the Distance
+export interface Distance {
+  value: number;
+  unit: DistanceUnit;
 }
+  
 
 

@@ -2,6 +2,13 @@
 
 ## Workflow
 
+### Initial State 
+
+1. if it is a new state , an item will be added by default (gobernacion scz location).
+2. Type something and select an item from the dropdown.
+3. Show a loading widget while waiting for the API response.
+4. Add the selected item to the `selectedLocationList` with the distance from the previous point.
+
 ### Select a Locality
 
 1. Type something and select an item from the dropdown.

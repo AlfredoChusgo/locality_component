@@ -1,7 +1,8 @@
-import { FakeDistanceCalculatorService, IDistanceCalculatorService, ILocalidadRepository, InMemoryLocalidadRepository } from "./repositories";
+import { CachedLocalidadRepository, FakeDistanceCalculatorService, IDistanceCalculatorService, ILocalidadRepository, InMemoryLocalidadRepository } from "./repositories";
 
-
-let localidadRepository: ILocalidadRepository = new InMemoryLocalidadRepository();
+//development config
+//let localidadRepository: ILocalidadRepository = new InMemoryLocalidadRepository();
+let localidadRepository: ILocalidadRepository = new CachedLocalidadRepository(new InMemoryLocalidadRepository());
 let distanceCalculatorService: IDistanceCalculatorService = new FakeDistanceCalculatorService();
 
 export default {localidadRepository,distanceCalculatorService};
