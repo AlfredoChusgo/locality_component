@@ -1,7 +1,11 @@
-import { LocalidadViewModel } from "./models";
+import { Distance, GeopointViewModel, LocalidadViewModel } from "./models";
 
 export interface ILocalidadRepository{
     getAll(): Promise<LocalidadViewModel[]>;
+}
+
+export interface IDistanceCalculatorService{
+    getDistance( sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance>;
 }
 
 
@@ -38,5 +42,14 @@ export class InMemoryLocalidadRepository implements ILocalidadRepository {
     async getAll(): Promise<LocalidadViewModel[]> {
         await this.load();
         return this.list;
+    }
+}
+
+export class FakeDistanceCalculatorService implements IDistanceCalculatorService {
+    getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
+        return new Promise((resolve,reject)=>{
+            let result = Math.random() * 100 + 1;
+            return resolve(new Distance(result,"km"));
+        });        
     }
 }
