@@ -70,7 +70,7 @@ export class CachedLocalidadRepository implements ILocalidadRepository {
 
 export class FakeDistanceCalculatorService implements IDistanceCalculatorService {
     async getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         let result = Math.random() * 100 + 1;
         return {value:result,unit: "km"};        
     }
@@ -117,7 +117,7 @@ export class InMemoryLocalidadRepository implements ILocalidadRepository {
 
     async getAll(): Promise<LocalidadViewModel[]> {
         await this.load();        
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         return this.list;
     }
 }

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk, current } from '@reduxjs/toolkit';
 import dependencies  from '../../data/dependencies';
-import { GeopointViewModel, LocalidadSelectedViewModel, LocalidadViewModel } from '../../data/models';
+import { Distance, GeopointViewModel, LocalidadSelectedViewModel, LocalidadViewModel } from '../../data/models';
 import { RootState } from '../store/store';
 import { gobernacionLocalidad } from '../../data/const_data';
 
@@ -8,7 +8,8 @@ import { gobernacionLocalidad } from '../../data/const_data';
 interface LocationPickerState {
   localidadAutoCompleteList: LocalidadViewModel[];
   selectedLocalidadList : LocalidadSelectedViewModel[];
-  startingPoint : LocalidadViewModel | undefined,
+  startingPoint : LocalidadViewModel | undefined;
+  totalDistance: Distance;
   loading: boolean;
   error: string;
 }
@@ -16,6 +17,7 @@ interface LocationPickerState {
 const initialState: LocationPickerState = {
   localidadAutoCompleteList: [],
   selectedLocalidadList: [],
+  totalDistance : {unit:"km",value:0},
   startingPoint : gobernacionLocalidad,
   loading: false,
   error: "",
@@ -81,6 +83,19 @@ const locationPickerListSlice = createSlice({
   {
     setStartingPoint : (state, action: PayloadAction<LocalidadViewModel>)=>{
       state.startingPoint = action.payload;
+    },
+    resetState : (state)=>{
+      state.selectedLocalidadList= [];
+      state.startingPoint = gobernacionLocalidad;
+      state.loading =  false;
+      state.error = "";
+    },
+    removeLastLocalidadSelected: (state)=>{
+      const newArray = state.selectedLocalidadList.filter((_, index, array) => index < array.length - 1);
+      state.selectedLocalidadList = newArray;
+
+      let totalDistance = newArray.reduce((acc,{distance})=> acc + distance.value, 0);
+      state.totalDistance = {unit:'km',value:totalDistance};
     }
   },
   extraReducers: (builder) => {
@@ -102,15 +117,18 @@ const locationPickerListSlice = createSlice({
       .addCase(addLocationToSelectedLocalidad.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedLocalidadList = action.payload;
+        let totalDistance = action.payload.reduce((acc,{distance})=> acc + distance.value, 0);
+        state.totalDistance = {unit:'km',value:totalDistance};
       })
       .addCase(addLocationToSelectedLocalidad.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "something happened";
       });
+
   }
 });
 
 //export const { increment, decrement } = searchHomeSlice.actions;
 //export const { applyFilters } = locationPickerListSlice.actions;
-export const { setStartingPoint } = locationPickerListSlice.actions;
+export const { setStartingPoint,resetState,removeLastLocalidadSelected } = locationPickerListSlice.actions;
 export default locationPickerListSlice.reducer;

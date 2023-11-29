@@ -1,34 +1,39 @@
 //import Autocomplete from '@mui/material/Autocomplete';
 
-import { Autocomplete, Avatar, CircularProgress, IconButton, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Stack, TextField } from "@mui/material";
+import { Autocomplete, Avatar, CircularProgress, IconButton, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import store, { RootState, useAppDispatch } from "../redux/store/store";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
-import { addLocationToSelectedLocalidad, fetchLocalities } from "../redux/features/location_picker_slice";
+import { addLocationToSelectedLocalidad, fetchLocalities, removeLastLocalidadSelected, resetState } from "../redux/features/location_picker_slice";
 import DeleteIcon from '@mui/icons-material/Delete';
 import React from "react";
 import { LocalidadViewModel } from "../data/models";
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-
+import RestoreIcon from '@mui/icons-material/Restore';
 export default function LocationPickerComponent() {
     const dispatch = useAppDispatch;
 
-    const { localidadAutoCompleteList: localidadList, loading, error, selectedLocalidadList, startingPoint } = useSelector((state: RootState) => state.locationPicker);
+    const { localidadAutoCompleteList: localidadList, loading, error, selectedLocalidadList, startingPoint,totalDistance } = useSelector((state: RootState) => state.locationPicker);
     useEffect(() => {
         store.dispatch(fetchLocalities());
     }, [dispatch]);
 
-    const selectedLocalidadComponent = selectedLocalidadList.map(e => {
+    const selectedLocalidadComponent = selectedLocalidadList.map((e, index) => {
         const primaryText = `${e.sourceLocalidad.displayName} - ${e.targetLocalidad.displayName}`;
         const secondaryText = `${e.distance.value} ${e.distance.unit}`;
         const key = `${e.sourceLocalidad.id}-${e.targetLocalidad.id}`;
+
+        const deleteAction = (index == selectedLocalidadList.length - 1) ? (
+            <IconButton edge="end" aria-label="delete" onClick={() => {
+                store.dispatch(removeLastLocalidadSelected());
+            }}>
+                <DeleteIcon />
+            </IconButton>
+        ) : null;
+
         return <ListItem
             key={key}
-            secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                    <DeleteIcon />
-                </IconButton>
-            }
+            secondaryAction={deleteAction}
         >
             <ListItemText
                 primary={primaryText}
@@ -37,20 +42,6 @@ export default function LocationPickerComponent() {
         </ListItem>;
     });
 
-    const startingPointComponent = (<ListItem
-        key={startingPoint?.id}
-        secondaryAction={
-            <IconButton edge="end" aria-label="delete">
-                <DeleteIcon />
-            </IconButton>
-        }
-        style={{ backgroundColor: '#40F99B' }}
-    >
-        <ListItemText
-            primary={startingPoint?.displayName}
-            secondary="Punto de partida"
-        />
-    </ListItem>);
 
     const handleOnChange = (
         event: React.ChangeEvent<{}>,
@@ -65,63 +56,58 @@ export default function LocationPickerComponent() {
     let selectedLocalidadLoading = (
         <Stack spacing={1}>
 
-            <Skeleton variant="rounded" width={210} height={60} />
-            <Skeleton variant="rounded" width={210} height={60} />
-            <Skeleton variant="rounded" width={210} height={60} />
+            <Skeleton variant="rounded" height={60} />
+            <Skeleton variant="rounded" height={60} />
+            <Skeleton variant="rounded" height={60} />
+            <Skeleton variant="rounded" height={30} />
         </Stack>);
-    // let component = (
-    //     <div>
-    //         <h1>LocationComponent</h1>
-    //         <Autocomplete
-    //             disablePortal
-    //             id="localidad-combo"
-    //             options={localidadList}
-    //             loading={loading}
-    //             getOptionLabel={(option) => option.displayName}
-    //             sx={{ width: 300 }}
-    //             renderInput={(params) => <TextField {...params} label="Localidades" />}
-    //             onChange={handleOnChange}
-    //         />
 
-    //         <List >
-    //             {startingPointComponent != undefined && startingPointComponent}
-    //             {!loading && selectedLocalidadComponent}
-    //             {loading && selectedLocalidadLoading}
-    //         </List>
-    //     </div>
-    // );
     let component = (
         <div>
-        <Grid container spacing={2}>
-            <Grid xs={12}>
-                <h1>LocationComponent</h1>
+            <Grid container spacing={2}>
+                <Grid xs={12}>
+                    <h1>LocationComponent</h1>
+                </Grid>
+                <Grid xs={11}>
+                    <Autocomplete
+                        disablePortal
+                        id="localidad-combo"
+                        options={localidadList}
+                        loading={loading}
+                        getOptionLabel={(option) => option.displayName}
+
+                        // renderInput={(params) => <TextField {...params} label="Localidades" />}
+                        renderInput={(params) => <TextField {...params} label="Localidades" />}
+                        onChange={handleOnChange}
+                    />
+                </Grid>
+                <Grid xs={1}>
+                    <Tooltip title="Reiniciar">
+                        <IconButton edge="end" aria-label="Reiniciar" onClick={() => {
+                            store.dispatch(resetState());
+                        }}>
+                            <RestoreIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                </Grid>
+                <Grid xs={12} spacing={1}>
+
+                    <List >
+                        {getStartingPointComponent() != undefined && getStartingPointComponent()}
+                        {!loading && selectedLocalidadComponent}
+                        {loading && selectedLocalidadLoading}
+                    </List>
+                </Grid>
+                <Grid xs={8}>
+                    {/* <Item>xs=8</Item> */}
+                    <Typography variant="subtitle1" component="span">
+                        {`Distancia total : ${Math.round(totalDistance.value * 100) / 100} ${totalDistance.unit} `}
+                        
+                    </Typography>
+                </Grid>
             </Grid>
-            <Grid xs={12}>
-            <Autocomplete
-                disablePortal
-                id="localidad-combo"
-                options={localidadList}
-                loading={loading}
-                getOptionLabel={(option) => option.displayName}
-                
-                // renderInput={(params) => <TextField {...params} label="Localidades" />}
-                renderInput={(params) => <TextField {...params} label="Localidades" />}
-                onChange={handleOnChange}
-            />
-            </Grid>
-            <Grid xs={12}>
-                
-            <List >
-                {startingPointComponent != undefined && startingPointComponent}
-                {!loading && selectedLocalidadComponent}
-                {loading && selectedLocalidadLoading}
-            </List>
-            </Grid>
-            <Grid xs={8}>
-                {/* <Item>xs=8</Item> */}
-            </Grid>
-        </Grid>
-            
+
         </div>
     );
 
@@ -131,5 +117,25 @@ export default function LocationPickerComponent() {
             {component}
         </div>
     );
+
+
+    function getStartingPointComponent() {
+        const startingPointActionButton = selectedLocalidadList.length == 0 ? (<IconButton edge="end" aria-label="delete">
+            <DeleteIcon />
+        </IconButton>) : null;
+        const startingPointComponent = (<ListItem
+            key={startingPoint?.id}
+            secondaryAction={startingPointActionButton}
+            style={{ backgroundColor: '#40F99B' }}
+        >
+            <ListItemText
+                primary={startingPoint?.displayName}
+                secondary="Punto de partida" />
+        </ListItem>);
+        return startingPointComponent;
+    }
+}
+
+function getStartingComponent() {
 
 }
