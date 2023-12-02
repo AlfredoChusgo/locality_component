@@ -1,10 +1,12 @@
-import { apiKey } from "../secrets";
 import { CachedLocalidadRepository, FakeDistanceCalculatorService, IDistanceCalculatorService, ILocalidadRepository, InMemoryLocalidadRepository, MatrixAPICalculatorService } from "./repositories";
+import { config } from "../config";
 
-//development config
-//let localidadRepository: ILocalidadRepository = new InMemoryLocalidadRepository();
-let localidadRepository: ILocalidadRepository = new CachedLocalidadRepository(new InMemoryLocalidadRepository());
-//let distanceCalculatorService: IDistanceCalculatorService = new FakeDistanceCalculatorService();
-let distanceCalculatorService: IDistanceCalculatorService = new MatrixAPICalculatorService(apiKey);
+let localidadRepository: ILocalidadRepository = new InMemoryLocalidadRepository(config.localidadList);
+let distanceCalculatorService: IDistanceCalculatorService = new MatrixAPICalculatorService(config.apiKey);
 
-export default {localidadRepository,distanceCalculatorService};
+let dependencies = {localidadRepository,distanceCalculatorService};
+export function UpdateDependencies(){
+    dependencies.localidadRepository= new InMemoryLocalidadRepository(config.localidadList);
+    dependencies.distanceCalculatorService = new MatrixAPICalculatorService(config.apiKey);
+}
+export default dependencies;
