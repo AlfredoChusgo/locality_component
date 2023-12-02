@@ -1,5 +1,3 @@
-//import Autocomplete from '@mui/material/Autocomplete';
-
 import { Autocomplete, Avatar, CircularProgress, IconButton, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import store, { RootState, useAppDispatch } from "../redux/store/store";
 import { useSelector } from "react-redux";
@@ -8,9 +6,8 @@ import { addLocationToSelectedLocalidad, fetchLocalities, removeLastLocalidadSel
 import DeleteIcon from '@mui/icons-material/Delete';
 import React from "react";
 import { LocalidadViewModel } from "../data/models";
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import Grid from '@mui/material/Unstable_Grid2';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { start } from "repl";
 export default function LocationPickerComponent() {
     const dispatch = useAppDispatch;
 
@@ -21,7 +18,7 @@ export default function LocationPickerComponent() {
 
     const selectedLocalidadComponent = selectedLocalidadList.map((e, index) => {
         const primaryText = `${e.sourceLocalidad.displayName} - ${e.targetLocalidad.displayName}`;
-        const secondaryText = `${e.distance.value} ${e.distance.unit}`;
+        const secondaryText = `${Number(e.distance.value.toFixed(2))} ${e.distance.unit}`;
         const key = `${e.sourceLocalidad.id}-${e.targetLocalidad.id}`;
 
         const deleteAction = (index == selectedLocalidadList.length - 1) ? (

@@ -20,3 +20,6 @@ LocationPicker :
             *the last item from the selectedLocationlist should not be selected or display an error 
             if the same item is selected
 
+
+how to persist data ? 
+    *update input hidden information  every time the state is updated
