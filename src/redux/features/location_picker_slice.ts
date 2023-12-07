@@ -110,6 +110,9 @@ const locationPickerListSlice = createSlice({
       .addCase(fetchLocalities.fulfilled, (state, action) => {
         state.loading = false;
         state.localidadAutoCompleteList = action.payload;
+        if(action.payload.length > 0){
+          state.startingPoint = action.payload[0];
+        }        
       })
       .addCase(fetchLocalities.rejected, (state, action) => {
         state.loading = false;

@@ -97,6 +97,38 @@ export class MatrixAPICalculatorService implements IDistanceCalculatorService {
     }
 }
 
+export class WebApiDistanceCalculatorService implements IDistanceCalculatorService {
+    
+    constructor(private route : string){
+
+    }
+
+    async getDistance(sourceGeopoint: GeopointViewModel, targetGetoPoint: GeopointViewModel): Promise<Distance> {
+
+        try {
+        
+            // Replace with the desired latitude and longitude coordinates
+            const originLat = sourceGeopoint.lat; // New York, NY
+            const originLng = sourceGeopoint.long;
+            const destinationLat = targetGetoPoint.lat; // Los Angeles, CA
+            const destinationLng = targetGetoPoint.long;
+                    
+            //const apiUrl = `${this.route}origins=${originLat},${originLng}&destinations=${destinationLat},${destinationLng}&key=${this.apiKey}`;
+            const apiUrl = `${this.route}?SourceGeopointLat=${originLat}&SourceGeopointLong=${originLng}&TargetGeopointLat=${destinationLat}&TargetGeopointLong=${destinationLng}`;
+        
+            // Make a request to the Distance Matrix API
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+        
+            return data;
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            throw Error("error");
+          }
+    }
+}
+
+
 
 export class InMemoryLocalidadRepository implements ILocalidadRepository {
     private list: LocalidadViewModel[] = [];

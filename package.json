@@ -46,7 +46,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:component": "rollup -c"
+    "build:component": "webpack --config webpack/webpack.component.js"
   },
   "eslintConfig": {
     "extends": [

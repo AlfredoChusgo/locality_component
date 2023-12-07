@@ -25,4 +25,13 @@ export interface Distance {
 }
   
 
+export interface RenderComponentProps {
+    htmlDocumentElementId:string;
+    apikey:string;
+    localidadList:LocalidadViewModel[];
+    webApiDistanceCalculatorRoute : string;
+}
+  
+
+
 
