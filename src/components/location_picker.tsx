@@ -63,9 +63,9 @@ export default function LocationPickerComponent() {
     let component = (
         <div>
             <Grid container spacing={2}>
-                <Grid xs={12}>
+                {/* <Grid xs={12}>
                     <h1>LocationComponent</h1>
-                </Grid>
+                </Grid> */}
                 <Grid xs={11}>
                     <Autocomplete
                         disablePortal

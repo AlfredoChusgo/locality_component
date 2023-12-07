@@ -29,6 +29,7 @@ export interface Distance {
 export interface RenderComponentProps {
     htmlDocumentElementId:string;
     appConfig:AppConfig;
+    initialState : LocalidadSelectedViewModel[];
 }
   
 

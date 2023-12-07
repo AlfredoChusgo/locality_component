@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 //import './index.css';
 import App from './App';
-import { Provider } from 'react-redux';
-import store from './redux/store/store';
+import { Provider, useSelector } from 'react-redux';
+import store, { RootState } from './redux/store/store';
 import { AppConfig, updateConfig } from './config';
 import { apiKey } from './secrets';
 import { sampleLocalidadlist } from './data/const_data';
-import { LocalidadViewModel, RenderComponentProps } from './data/models';
+import { LocalidadSelectedViewModel, LocalidadViewModel, RenderComponentProps } from './data/models';
+import { setInitialState } from './redux/features/location_picker_slice';
 
 // updateConfig({apiKey: apiKey, localidadList: sampleLocalidadlist});
 
@@ -22,10 +23,15 @@ import { LocalidadViewModel, RenderComponentProps } from './data/models';
 
 //     </React.StrictMode>
 // );
-function renderComponent({htmlDocumentElementId, appConfig}: RenderComponentProps) {
+function renderComponent({htmlDocumentElementId, appConfig, initialState}: RenderComponentProps) {
 
     //updateConfig({apiKey: apikey, localidadList: localidadList,webApiDistanceCalculatorRoute:webApiDistanceCalculatorRoute});
     updateConfig(appConfig);
+
+    if(initialState && initialState.length > 0 ) {
+        store.dispatch(setInitialState(initialState));
+    }
+
     const root = ReactDOM.createRoot(
         document.getElementById(htmlDocumentElementId) as HTMLElement
     );
@@ -38,6 +44,12 @@ function renderComponent({htmlDocumentElementId, appConfig}: RenderComponentProp
     );
 }
 
+function getState () : LocalidadSelectedViewModel[]{
+    const { selectedLocalidadList } = store.getState().locationPicker;
+    return selectedLocalidadList;
+}
+
 export default { 
-    render : renderComponent
+    render : renderComponent,
+    getState : getState
 }

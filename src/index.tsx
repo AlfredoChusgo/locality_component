@@ -9,21 +9,7 @@ import { apiKey } from './secrets';
 import { sampleLocalidadlist } from './data/const_data';
 import localidadComponent from './component';
 import { RenderComponentProps } from './data/models';
-//updateConfig({apiKey: apiKey, localidadList: sampleLocalidadlist});
-// updateConfig({configuration:{mode:"InMemoryMode"}});
 
-
-// const root = ReactDOM.createRoot(
-//   document.getElementById('root') as HTMLElement
-// );
-// root.render(
-//   <React.StrictMode>
-//     <Provider store={store}>
-//       <App />
-//     </Provider>
-
-//   </React.StrictMode>
-// );
 const appMemoryConfig : AppConfig = { 
   configuration : {
     mode : "InMemoryMode"
@@ -48,7 +34,12 @@ const appWebApiConfig : AppConfig = {
 }
 const renderComponentProps : RenderComponentProps = {
   htmlDocumentElementId : "root",
-  appConfig: appWebApiConfig
+  appConfig: appMemoryConfig,
+  initialState : [
+    {sourceLocalidad:sampleLocalidadlist[0],targetLocalidad:sampleLocalidadlist[1],distance:{value:45,unit:"km"}},
+    {sourceLocalidad:sampleLocalidadlist[4],targetLocalidad:sampleLocalidadlist[1],distance:{value:75,unit:"km"}},
+    {sourceLocalidad:sampleLocalidadlist[3],targetLocalidad:sampleLocalidadlist[5],distance:{value:95,unit:"km"}},
+]
 }
 localidadComponent.render(renderComponentProps);
 
