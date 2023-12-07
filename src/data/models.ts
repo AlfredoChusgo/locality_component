@@ -1,3 +1,5 @@
+import { AppConfig } from "../config";
+
 export interface LocalidadViewModel {
     id: number;
     displayName: string;
@@ -23,13 +25,10 @@ export interface Distance {
   value: number;
   unit: DistanceUnit;
 }
-  
 
 export interface RenderComponentProps {
     htmlDocumentElementId:string;
-    apikey:string;
-    localidadList:LocalidadViewModel[];
-    webApiDistanceCalculatorRoute : string;
+    appConfig:AppConfig;
 }
   
 

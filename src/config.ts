@@ -2,36 +2,41 @@ import { UpdateDependencies } from "./data/dependencies";
 import { LocalidadViewModel } from "./data/models";
 
 // config.ts
-type Appconfig = {
-    apiKey : string;
-    webApiDistanceCalculatorRoute : string;
-    localidadList : LocalidadViewModel[];
+// type Appconfig = {
+//     apiKey : string;
+//     webApiDistanceCalculatorRoute : string;
+//     localidadList : LocalidadViewModel[];
+// }
+
+
+export type InMemoryMode = {
+    mode:"InMemoryMode";
 }
 
-type ApplicationMOde = ""
-export let config : Appconfig = {
-    apiKey: 'default_api_key',
-    webApiDistanceCalculatorRoute:"",
-    localidadList: [],
-};
-type InMemoryMode = {
+export type GoogleMatrixMode = {
+    mode:"GoogleMatrixMode";
+    apiKey: string;
+    localidadList: LocalidadViewModel[];
 }
 
-type GoogleMatrixMode = {
-    apiKey: 'default_api_key',
-    localidadList: [],
+export type WebApiMode = {
+    mode:"WebApiMode";
+    distanceCalculatorRoute: string;
+    localidadList: LocalidadViewModel[];
 }
 
-type WebApiMode = {
-    distanceCalculatorRoute: '/Distance/CalculateDistance',
-    localidadList: [],
-}
-
-type Appconfig2 = {
+export type AppConfig = {
     configuration : InMemoryMode | GoogleMatrixMode | WebApiMode
 }
+
+export let config : AppConfig = {
+    // apiKey: 'default_api_key',
+    // webApiDistanceCalculatorRoute:"",
+    // localidadList: [],
+    configuration : {mode:"InMemoryMode"}
+};
 // Update the configuration at runtime
 export function updateConfig(newConfig: Partial<typeof config>): void {
     config = { ...config, ...newConfig };
-    UpdateDependencies();
+    UpdateDependencies(config);
 }
