@@ -11,8 +11,10 @@ function App() {
   // );
   return (
     <div className="App">
+      
       <Grid container spacing={2}>
-            <Grid xs={4}>
+            {/* <Grid xs={4}> */}
+            <Grid xs={12}>
             <LocationPickerComponent/>
             </Grid>
         </Grid>
